@@ -7,21 +7,11 @@ const extensionId = 'readability';
 
 export function activate(context: vscode.ExtensionContext) {
 	const provider = new ReadabilityProvider(context.extensionUri);
-
+	provider.syncSettings();
 	context.subscriptions.push(vscode.commands.registerCommand(`${extensionId}.checkSelection`, provider.checkSelection, provider));
 
 	context.subscriptions.push(
 		vscode.window.registerWebviewViewProvider(ReadabilityProvider.viewType, provider));
-
-	context.subscriptions.push(
-		vscode.commands.registerCommand(`${extensionId}.addColor`, () => {
-			provider.addColor();
-		}));
-
-	context.subscriptions.push(
-		vscode.commands.registerCommand(`${extensionId}.clearColors`, () => {
-			provider.clearColors();
-		}));
 
 	// Update the settings when the configuration relevant to the extension changes
 	context.subscriptions.push(
@@ -64,29 +54,16 @@ class ReadabilityProvider implements vscode.WebviewViewProvider {
 		};
 
 		webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
-
-		webviewView.webview.onDidReceiveMessage((data) => {
-			switch (data.type) {
-				case 'colorSelected':
-					{
-						vscode.window.activeTextEditor?.insertSnippet(new vscode.SnippetString(`#${data.value}`));
-						break;
-					}
-			}
-		});
-	}
-
-	public addColor() {
-		if (this._view) {
-			this._view.show?.(true); // `show` is not implemented in 1.49 but is for 1.50 insiders
-			this._view.webview.postMessage({ type: 'addColor' });
-		}
-	}
-
-	public clearColors() {
-		if (this._view) {
-			this._view.webview.postMessage({ type: 'clearColors' });
-		}
+		// Handle message from webview JS
+		// webviewView.webview.onDidReceiveMessage((data) => {
+		// 	switch (data.type) {
+		// 		case 'something':
+		// 			{
+		// 				// do something
+		// 				break;
+		// 			}
+		// 	}
+		// });
 	}
 
 	private _getHtmlForWebview(webview: vscode.Webview) {
@@ -176,12 +153,13 @@ class ReadabilityProvider implements vscode.WebviewViewProvider {
     this.idealFleschReadingEaseScore = Math.max(0, Math.min(userSetting.idealFleschReadingEaseScore, 100));
     this.idealFleschKincaidGradeLevel = Math.max(0, Math.min(userSetting.idealFleschKincaidGradeLevel, 18));
 		if (this._view) {
-			this._view.webview.postMessage({ command: 'syncSettings', idealFleschEase: this.idealFleschReadingEaseScore, idealFleschGrade: this.idealFleschKincaidGradeLevel });
+			this._view.webview.postMessage({ command: 'syncSettings', fleschEaseIdeal: this.idealFleschReadingEaseScore, fleschGradeIdeal: this.idealFleschKincaidGradeLevel });
 		}
   }
 
 	// Check the highlighted/selected text for readability.
 	checkSelection() {
+		this._view?.show();
 		const rawSelectedText = this.getActiveEditorSelectedText();
 		if (!rawSelectedText) {
 			// No selection, nothing to check.
