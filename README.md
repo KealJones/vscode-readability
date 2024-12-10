@@ -1,2 +1,2 @@
-# vscode-readable
- An extension that shows information about the complexity of a user's English-language writing.
+# Readability
+A vscode extension that provides a readability score of your highlighted text.

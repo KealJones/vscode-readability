@@ -1,0 +1,94 @@
+{
+  "name": "readability",
+  "displayName": "Readability",
+  "description": "An extension that shows information about the complexity of a user's English-language writing.",
+  "publisher": "KealJones",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.95.0"
+  },
+  "license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/KealJones/vscode-readability"
+	},
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "views": {
+      "explorer": [
+        {
+          "type": "webview",
+          "id": "readability.scoreView",
+          "name": "Readability"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Readability",
+      "properties": {
+        "readability.idealFleschKincaidGradeLevel": {
+          "type": "number",
+          "default": 8,
+          "description": "Ideal Flesch-Kincaid Grade Level score for comparison."
+        },
+        "readability.idealFleschReadingEaseScore": {
+          "type": "number",
+          "default": 80,
+          "description": "Ideal Flesch-Kincaid Reading Ease Score for comparison."
+        }
+      }
+    },
+    "menus": {
+      "editor/context": [
+        {
+          "when": "editorHasSelection",
+          "command": "readability.checkSelection",
+          "group": "navigation"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "readability.checkSelection",
+        "category": "Readability",
+        "title": "Check Readability"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "pnpm run package",
+    "compile": "pnpm run check-types && pnpm run lint && node esbuild.js",
+    "watch": "npm-run-all -p watch:*",
+    "watch:esbuild": "node esbuild.js --watch",
+    "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
+    "package": "pnpm run check-types && pnpm run lint && node esbuild.js --production",
+    "compile-tests": "tsc -p . --outDir out",
+    "watch-tests": "tsc -p . -w --outDir out",
+    "pretest": "pnpm run compile-tests && pnpm run compile && pnpm run lint",
+    "check-types": "tsc --noEmit",
+    "lint": "eslint src",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.9",
+    "@types/node": "20.x",
+    "@types/vscode": "^1.95.0",
+    "@types/vscode-webview": "^1.57.0",
+    "@typescript-eslint/eslint-plugin": "^8.10.0",
+    "@typescript-eslint/parser": "^8.7.0",
+    "@vscode/test-cli": "^0.0.10",
+    "@vscode/test-electron": "^2.4.1",
+    "esbuild": "^0.24.0",
+    "eslint": "^9.13.0",
+    "npm-run-all": "^4.1.5",
+    "typescript": "^5.6.3"
+  },
+  "dependencies": {
+    "remove-markdown": "^0.5.5",
+    "text-readability-ts": "^1.0.11"
+  }
+}
