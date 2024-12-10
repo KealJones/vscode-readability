@@ -34,7 +34,6 @@
     const message = event.data; // The json data that the extension sent
     switch (message.command) {
       case 'syncSettings':
-        //currentCount = Math.ceil(currentCount * 0.5);
         if (fleschEaseIdeal && fleschGradeIdeal) {
           fleschGradeIdeal.textContent = message.fleschGradeIdeal;
           fleschEaseIdeal.textContent = message.fleschEaseIdeal;
@@ -43,14 +42,10 @@
             fleschEaseIdeal: message.fleschEaseIdeal,
           });
         }
-
-        // counter.textContent = `${currentCount}`;
         break;
       case 'checkSelected':
         emptyView?.classList.toggle('hide', true);
         contentContainer?.classList.toggle('hide', false);
-
-        //currentCount = Math.ceil(currentCount * 0.5);
         if (selectedText) {
           selectedText.textContent = message.selectedText;
         }
