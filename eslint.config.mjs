@@ -2,8 +2,8 @@ import typescriptEslint from "@typescript-eslint/eslint-plugin";
 import tsParser from "@typescript-eslint/parser";
 
 export default [{
-    files: ["**/*.ts"],
-}, {
+    files: ["src/**/*.{ts|js}", "media/**/*.{ts|js}"],
+
     plugins: {
         "@typescript-eslint": typescriptEslint,
     },
